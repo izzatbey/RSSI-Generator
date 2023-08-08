@@ -6,7 +6,7 @@ import argparse
 import os
 
 # Parse command-line arguments
-parser = argparse.ArgumentParser(description='Preprocess data using polynomial fitting.')
+parser = argparse.ArgumentParser(description='Preprocess data using curve fitting.')
 parser.add_argument('--datapath', required=True, help='Path to the datasets directory')
 parser.add_argument('--filename', required=True, help='filename of the datasets')
 parser.add_argument('--destination', required=True, help='Path for the result destination')
@@ -58,7 +58,6 @@ plt.show()
 # Create a CSV file
 with open(data_destination_path, 'w', newline='') as csvfile:
     csvwriter = csv.writer(csvfile)
-    csvwriter.writerow(['fit3'])
     csvwriter.writerows(zip(y_fit3))
 
 print('------------------')

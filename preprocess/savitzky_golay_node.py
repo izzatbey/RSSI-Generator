@@ -11,7 +11,7 @@ p = 10
 RSSI=[]
 RSSI2=[]
 # Parse command-line arguments
-parser = argparse.ArgumentParser(description='Preprocess data using polynomial fitting.')
+parser = argparse.ArgumentParser(description='Preprocess data using savitzky golay.')
 parser.add_argument('--datapath', required=True, help='Path to the datasets directory')
 parser.add_argument('--filename', required=True, help='filename of the datasets')
 parser.add_argument('--destination', required=True, help='Path for the result destination')
