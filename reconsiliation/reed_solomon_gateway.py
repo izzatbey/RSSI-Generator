@@ -16,7 +16,7 @@ args = parser.parse_args()
 
 start3 = time.time()
 fooRS = ReedSolomon()
-namafile1 = os.path.join(args.datapath,'Kuantifikasi_Gateway.csv') 
+namafile1 = os.path.join(args.datapath,'Kuantifikasi_GW.csv') 
 # proses Encode RSSI Gateway
 RSSI3 = []
 with open(namafile1) as f:
@@ -120,7 +120,7 @@ for i,j in zip(D,E):
         baris +=1
         for l,k in zip(i,j):
                 if(l==k):
-                        pass
+                    pass
                 else:
                         err += 1
         print('baris',baris,':error =', err)
