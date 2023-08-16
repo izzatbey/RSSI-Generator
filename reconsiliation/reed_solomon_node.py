@@ -41,12 +41,12 @@ for blok in range(0, jmlblok):
     else:
         tmp.extend(rss_node1[6*blok:6*(blok+1)])
     rss_node.append(tmp)
-    np.savetxt(os.path.join(args.destination,'Split_Hasil_Kuan_Node.csv'), rss_node, delimiter=',', fmt='%i')
+    np.savetxt(os.path.join(args.destination,'Node/Split_Hasil_Kuan_Node.csv'), rss_node, delimiter=',', fmt='%i')
 bit=[]
 hasil=[]
 bit1=[]
 decods=[]
-with open(os.path.join(args.destination,'Split_Hasil_Kuan_Node.csv'), 'r') as source:
+with open(os.path.join(args.destination,'Node/Split_Hasil_Kuan_Node.csv'), 'r') as source:
     reader = csv.reader(source)
     for line in reader:
         bit.append(line)
@@ -55,10 +55,10 @@ with open(os.path.join(args.destination,'Split_Hasil_Kuan_Node.csv'), 'r') as so
         # encode the message
         tCode = fooRS.RSEncode(tMesg, tSize)
         hasil.append(tCode)
-        np.savetxt(os.path.join(args.destination,'Encoding_Node.csv'), hasil, delimiter=',', fmt='%i')
+        np.savetxt(os.path.join(args.destination,'Node/Encoding_Node.csv'), hasil, delimiter=',', fmt='%i')
 #ubah data ke dalam bentuk bit
 bita=[]
-with open(os.path.join(args.destination,'Encoding_Node.csv'), 'r') as source:
+with open(os.path.join(args.destination,'Node/Encoding_Node.csv'), 'r') as source:
         reader = csv.reader(source)
         for line1 in reader:
                 bita.append(line1)
@@ -81,8 +81,8 @@ for j in range(len(A)):
               bit_node.append(0)
         else:
                 bit_node.append(1)
-np.savetxt(os.path.join(args.destination,'Bit_Encoding_Node.csv'), bit_node, delimiter=',', fmt='%i')
-file = os.path.join(args.destination,'Bit_Encoding_Node.csv')
+np.savetxt(os.path.join(args.destination,'Node/Bit_Encoding_Node.csv'), bit_node, delimiter=',', fmt='%i')
+file = os.path.join(args.destination,'Node/Bit_Encoding_Node.csv')
 rssb = []
 with open(file) as f:
         datanode = csv.reader(f)
@@ -106,9 +106,9 @@ for blok in range(0, jmlhblok):
                 tmp.extend(rssd[31*blok:31*(blok+1)])
         rssc.append(tmp)
 #print(rssc)
-np.savetxt(os.path.join(args.destination,'Split_Bit_Encoding_Node.csv'), rssc, delimiter=',', fmt='%i')
+np.savetxt(os.path.join(args.destination,'Node/Split_Bit_Encoding_Node.csv'), rssc, delimiter=',', fmt='%i')
 
-workbook = xlrd.open_workbook(os.path.join(args.destination, 'Blok_Yang_Dihapus.xls'), on_demand = True)
+workbook = xlrd.open_workbook(os.path.join(args.destination, 'Node/Blok_Yang_Dihapus.xls'), on_demand = True)
 worksheet = workbook.sheet_by_name('hapusblok')
 first_row = [] # Header
 for col in range(0,worksheet.ncols):
@@ -126,16 +126,16 @@ for i in range(0,len(hapusbchbob)):
 	a = int(hapusbchbob[i])
 	del bita[a]
 
-with open(os.path.join(args.destination, 'Node_After_Hapus_Blok.csv'), 'w',newline='') as fp:
+with open(os.path.join(args.destination, 'Node/Node_After_Hapus_Blok.csv'), 'w',newline='') as fp:
     a=csv.writer(fp,delimiter=',')
     a.writerows(bita)
 F=[]
-with open(os.path.join(args.destination, 'Node_After_Hapus_Blok.csv'), 'r') as f:
+with open(os.path.join(args.destination, 'Node/Node_After_Hapus_Blok.csv'), 'r') as f:
     reader = csv.reader(f)
     for row in reader:
         F.append(row)
 G=[]
-with open(os.path.join(args.destination, 'Gateway_After_Hapus_Blok.csv'), 'r') as f:
+with open(os.path.join(args.destination, 'Gateway/Gateway_After_Hapus_Blok.csv'), 'r') as f:
     reader = csv.reader(f)
     for row in reader:
         G.append(row)
@@ -146,10 +146,10 @@ for i in range(len(F)):
                        data_hasil.append(F[i][j])
                 else:
                         data_hasil.append(G[i][j])
-with open(os.path.join(args.destination, 'Hasil_Node_After_Hapus_Blok.csv'), 'w',newline='') as f:
+with open(os.path.join(args.destination, 'Node/Hasil_Node_After_Hapus_Blok.csv'), 'w',newline='') as f:
     writer=csv.writer(f)
     writer.writerows([[row] for row in data_hasil])
-namafile2 = os.path.join(args.destination, 'Hasil_Node_After_Hapus_Blok.csv'   )            
+namafile2 = os.path.join(args.destination, 'Node/Hasil_Node_After_Hapus_Blok.csv'   )            
 RSSI = []
 with open(namafile2) as f:
     dataalice = csv.reader(f)
@@ -175,9 +175,9 @@ for blok in range(0, jmlblok):
     rss_node.append(tmp)
     tMesg1 = fooRS.RSDecode(tmp, tSize)
     decods.append(tMesg1)
-    np.savetxt(os.path.join(args.destination, 'Decoding_Node.csv'), decods, delimiter=',', fmt='%i')
+    np.savetxt(os.path.join(args.destination, 'Node/Decoding_Node.csv'), decods, delimiter=',', fmt='%i')
 bit2 = []
-with open(os.path.join(args.destination, 'Decoding_Node.csv'), 'r') as source:
+with open(os.path.join(args.destination, 'Node/Decoding_Node.csv'), 'r') as source:
     reader1 = csv.reader(source)
     for line1 in reader1:
         bit2.append(line1)
@@ -194,7 +194,7 @@ for k in range(len(rss3)):
                 rss4.append(1)
         else:
                 rss4.append(rss3[k])
-np.savetxt(os.path.join(args.destination, 'Decoding_Node_Tanpa_Parity.csv'), rss4, delimiter=',', fmt='%i')
+np.savetxt(os.path.join(args.destination, 'Node/Decoding_Node_Tanpa_Parity.csv'), rss4, delimiter=',', fmt='%i')
 
 end3=time.time()
 waktu_RS = end3-start3

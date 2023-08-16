@@ -5,7 +5,7 @@
 #include "include/externs.h"
 #include "include/utilities.h"
 #include "include/cephes.h"
-#include <unistd.h>
+
 #include <errno.h>
 #include "include/csvparser.h"
 
@@ -80,10 +80,9 @@ main()
 
 
 	// ========================================================================================================================
-	int caca[12800],epsilonlen[12800],maks,abc,isieps,totali,c,d,jj,indeks[10];
+	int caca[6144],epsilonlen[6144],maks,abc,isieps,totali,c,d,jj,indeks[48];
     //                                   file, delimiter, first_line_is_header?
-
-    CsvParser *csvparser = CsvParser_new("C:/Users/MHK/Documents/Folder Izzat/rssi-generator/datasets/Encryption/NodeUnivHash128.csv", ",", 0);
+    CsvParser *csvparser = CsvParser_new("hashok128.csv", ",", 0);
     CsvRow *row;
     i=0;
     while ((row = CsvParser_getRow(csvparser)) ) {
@@ -97,7 +96,7 @@ main()
     totali=i;
     //CsvParser_destroy(csvparser);
     // ========================================================================================================================
-	float ppp[10],pvalapen[10],pvalfreq[10],pvalblockfreq[10],pvalcusumf[10],pvalcusumr[10],pvalruns[10],pvallongruns[10],swap,maksapen;
+	float ppp[48],pvalapen[48],pvalfreq[48],pvalblockfreq[48],pvalcusumf[48],pvalcusumr[48],pvalruns[48],pvallongruns[48],swap,maksapen;
     maks=totali/128;
     //printf("coba print %d, len = %d\n",maks,totali);
 
@@ -105,7 +104,7 @@ main()
     	printf("=========== KUNCI KE %d ===========\n",abc+1);
 		for(isieps=0;isieps<128;isieps++){
 			epsilon[isieps]=caca[isieps+(abc*128)];
-			//printf("epsilon=%d, epsilonlen=%d\n",isieps,(isieps+(abc*128)));
+			//printf("epsilon=%d, epsilonlen=%d\n",isieps,(isieps+(abc*256)));
 			//printf("epsilon-%d %d: %d\n", abc+1,isieps,epsilon[isieps]);
 		}
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
@@ -113,10 +112,6 @@ main()
 		 * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 			printf("APPROXIMATE ENTROPY TEST [%d]\t\t",abc+1);
-		//	printf( "\t\t--------------------------------------------\n");
-		//	printf( "\t\tCOMPUTATIONAL INFORMATION:\n");
-		//	printf( "\t\t--------------------------------------------\n");
-		//	printf( "\t\t(a) m (block length)    = %d\n", m);
 
 			seqLength = n;
 			r = 0;
@@ -516,26 +511,20 @@ main()
 		printf("\nIndex of Sorted list in descending order:\n");
 		for ( c = 0 ; c < abc ; c++ )
 		    printf("Prioritas ke %d yaitu Kunci ke %d\n", c+1,indeks[c]+1);
-
-		char str[]="sudahujinist_Alice";
+		char str[]="NISTHash1";
 		create_marks_csv(str,indeks,abc);
 		getchar();
 	}
-void create_marks_csv(char *filename, int index[10],int m){
-	if (chdir("C:/Users/MHK/Documents/Folder Izzat/rssi-generator/encryption/") != 0) {
-        perror("chdir");
-        return;
-    }
-
+void create_marks_csv(char *filename, int index[47],int m){
 	filename=strcat(filename,".csv");
-	//printf("\n Creating file");
+	printf("\n Creating %s.csv file",filename);
 	FILE *fp;
 	int i,j;
 	fp=fopen(filename,"w+");
 	for(i=0;i<m;i++)
 	    fprintf(fp,"%d\n",index[i]);
 	fclose(fp);
-	printf("\n %s file created",filename);
+	printf("\n %sfile created",filename);
 
 }
 

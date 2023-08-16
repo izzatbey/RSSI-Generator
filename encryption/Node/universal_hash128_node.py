@@ -1,11 +1,16 @@
 import csv
+import hashlib
 import math
+import subprocess
 import time
 import numpy as np
 import openpyxl
 import argparse
 import os
 from hashlib import sha512
+from tempfile import TemporaryFile
+from xlwt import Workbook
+import xlrd
 
 def hash_function(input_data, hash_size):
     hash_object = sha512(input_data.encode())
@@ -100,4 +105,78 @@ end4 = time.time()
 waktu_hash = end4 - start4
 print('-------------------')
 print('Universal Hash Berhasil')
+print('-------------------')
+
+startnist = time.time()
+command = 'gcc -o "C:/Users/MHK/Documents/Folder Izzat/rssi-generator/encryption/NIST-Test128" "C:/Users/MHK/Documents/Folder Izzat/rssi-generator/encryption/NIST-Test128.c"'
+subprocess.run(command, shell=True)
+
+command = "NIST-Test128"
+subprocess.run(command, shell=True)
+
+indeks = []
+indek = []
+
+time.sleep(1)
+
+with open(os.path.join(args.destination, "sudahujinist_Alice.csv"), newline="") as f:
+    reader = csv.reader(f)
+    for row in reader:
+        indeks.append(row)
+prindek = []
+for i in range(0, len(indeks)):
+    indek.append(int(indeks[i][0]))
+    prindek.append(int(indeks[i][0]) + 1)
+endnist = time.time()
+print('===========~~~~~~~~~~~=========~~~~~~~~~~~~~~==============\n')
+print('NIST Hasil prioritas index',prindek)
+print('Waktu Proses Uji NIST : ', endnist - startnist)
+
+start6 = time.time()
+dataalice=[]
+hex1=[]
+for j in range(len(indek)):
+    hash1=[0]*128
+    for i in range(128):
+        hash1[i]=key1[indek[j]][i]
+
+    data1=''.join(str(e) for e in hash1)
+    someText1 = data1.encode("ascii")
+    b1=hashlib.sha1(someText1).hexdigest()
+    hex1.append(b1)
+
+    print('Hasil hash Alice Kunci-{} = {}'.format(indek[j]+1,hex1[j]))
+
+book=Workbook()
+sheet1=book.add_sheet('sha')
+sheet1.write(0,0,'node')
+for i in range (1,len(hex1)+1):
+    sheet1.write(i,0,hex1[i-1])
+book.save('Hashnode.xls')
+book.save(TemporaryFile())
+
+workbook = xlrd.open_workbook('../Gateway/Hashgateway.xls', on_demand = True)
+worksheet = workbook.sheet_by_index(0)
+first_row = [] # Header
+for col in range(0,worksheet.ncols):
+    first_row.append( worksheet.cell_value(0,col) )
+    # tronsform the workbook to a list of dictionnaries
+hex2 = []
+for row in range(1, worksheet.nrows):
+    elm = {}
+    for col in range(1):
+        elm=worksheet.cell_value(row,col)
+    hex2.append(elm)
+#end_SHA=time.time()
+#time_sha=end_SHA-start_SHA
+for j in range(len(indek)):    
+    if(hex1[j]==hex2[j]):
+        print('Hash Value-%d valid, proses enkripsi dapat dilakukan'%(j+1))
+    else:
+        print('Hash Value-%d not valid'%(j+1))
+
+end6 = time.time()
+waktu_SHA = end6-start6
+print('-------------------')
+print('SHA Berhasil')
 print('-------------------')

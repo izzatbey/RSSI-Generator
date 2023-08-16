@@ -13,10 +13,9 @@ degrees = [1, 2, 3, 4, 5, 6, 7, 8, 9]
 # Parse command-line arguments
 parser = argparse.ArgumentParser(description='Preprocess data using polynomial fitting.')
 parser.add_argument('--datapath', required=True, help='Path to the datasets directory')
-parser.add_argument('--filename', required=True, help='filename of the datasets')
 parser.add_argument('--destination', required=True, help='Path for the result destination')
 args = parser.parse_args()
-data_file_path = os.path.join(args.datapath, args.filename) 
+data_file_path = os.path.join(args.datapath, "data_rss_node.csv") 
 
 with open (data_file_path) as f:
     data=csv.reader(f)

@@ -1,6 +1,7 @@
 venv/
-# datasets/Preprocess/*
-# datasets/Quantification/*
-# datasets/Reconsiliation/*
+datasets/Preprocess/*
+datasets/Quantification/*
+datasets/Reconsiliation/*
 # datasets/Raw/*
 *.pyc
+*/__pycache__
