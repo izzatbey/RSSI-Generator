@@ -90,6 +90,9 @@
   - Node
 
     ```
-    python -m reconsiliation.reed_solomon_gateway --datapath "/path/to/file" --destination "/path/to/destination"
+    python -m reconsiliation.reed_solomon_node --datapath "/path/to/file" --destination "/path/to/destination"
     ```
   - Gateway
+    ```
+    python -m reconsiliation.reed_solomon_node --datapath "/path/to/file" --destination "/path/to/destination"
+    ```
