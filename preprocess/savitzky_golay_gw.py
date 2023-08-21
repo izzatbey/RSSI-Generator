@@ -31,7 +31,7 @@ for i in range(len(RSSI)):
 RSSI2=np.array(RSSI2)
 RSSI=RSSI2.reshape(1000)
 
-destination_file_path = os.path.join(args.destination, 'Golay_Node.csv')
+destination_file_path = os.path.join(args.destination, 'Golay_GW.csv')
 X_smooth_1 = savgol_filter(RSSI, w, polyorder = p)
 np.savetxt(destination_file_path, X_smooth_1, delimiter=",", fmt='%10.5f')
 
@@ -40,3 +40,4 @@ waktu_golay = end1-start1
 print('------------------')
 print('Preproses Berhasil')
 print('------------------')
+print ("Lama Eksekusi :",waktu_golay,"detik")

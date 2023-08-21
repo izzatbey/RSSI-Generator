@@ -1,4 +1,5 @@
 import csv
+import time
 import numpy as np
 from scipy.optimize import curve_fit
 import matplotlib.pyplot as plt
@@ -12,6 +13,8 @@ parser.add_argument('--destination', required=True, help='Path for the result de
 args = parser.parse_args()
 
 data_file_path = os.path.join(args.datapath, "data_rss_gateway.csv")
+
+start = time.time()
 
 x = []
 y = []
@@ -59,6 +62,9 @@ with open(data_destination_path, 'w', newline='') as csvfile:
     csvwriter = csv.writer(csvfile)
     csvwriter.writerows(zip(y_fit3))
 
+end = time.time()
+estimated = end - start
 print('------------------')
 print('Preproses Berhasil')
 print('------------------')
+print ("Lama Eksekusi :",estimated,"detik")

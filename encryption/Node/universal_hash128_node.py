@@ -1,3 +1,4 @@
+import binascii
 import csv
 import hashlib
 import math
@@ -11,6 +12,7 @@ from hashlib import sha512
 from tempfile import TemporaryFile
 from xlwt import Workbook
 import xlrd
+import pyaes
 
 def hash_function(input_data, hash_size):
     hash_object = sha512(input_data.encode())
@@ -42,10 +44,10 @@ sheet1.title = 'HasilBCH'
 sheet1.cell(row=1, column=1, value='ApNode')
 for i in range(1, len(bitalice) + 1):
     sheet1.cell(row=i + 1, column=1, value=int(bitalice[i - 1]))
-book.save(os.path.join(args.destination,'decodingnode_tanpaparity.xlsx'))
+book.save('decodingnode_tanpaparity.xlsx')
 
 # Read Excel and extract bit values
-workbook = openpyxl.load_workbook(os.path.join(args.destination,'decodingnode_tanpaparity.xlsx'), read_only=True)
+workbook = openpyxl.load_workbook('decodingnode_tanpaparity.xlsx', read_only=True)
 worksheet = workbook.active
 bbob = [int(worksheet.cell(row=row, column=1).value) for row in range(2, worksheet.max_row + 1)]
 
@@ -60,7 +62,7 @@ for i in range(aaaa):
     del bbob[lenbob]
 
 Hashtab = []
-with open(os.path.join(args.destination,'Hashtable128.csv'), newline='') as f:
+with open('Hashtable128.csv', newline='') as f:
     reader = csv.reader(f)
     for row in reader:
         Hashtab.append(row)
@@ -93,11 +95,11 @@ sheet1.title = 'univhash'
 sheet1.cell(row=1, column=1, value='Node')
 for i in range(1, len(bx) + 1):
     sheet1.cell(row=i + 1, column=1, value=int(bx[i - 1]))
-book.save(os.path.join(args.destination,'NodeUnivHash128.xlsx'))
+book.save('NodeUnivHash128.xlsx')
 
 # Convert the key to CSV format
 univ = [bx[i] for i in range(len(bx))]
-with open(os.path.join(args.destination,'hashok128.csv'), 'w', newline='') as fp:
+with open('hashok128.csv', 'w', newline='') as fp:
     a = csv.writer(fp, delimiter=',')
     a.writerows([[bit] for bit in univ])
 
@@ -108,10 +110,10 @@ print('Universal Hash Berhasil')
 print('-------------------')
 
 startnist = time.time()
-command = 'gcc -o "C:/Users/MHK/Documents/Folder Izzat/rssi-generator/encryption/NIST-Test128" "C:/Users/MHK/Documents/Folder Izzat/rssi-generator/encryption/NIST-Test128.c"'
-subprocess.run(command, shell=True)
+# command = 'gcc -o "C:/Users/MHK/Documents/Folder Izzat/rssi-generator/encryption/NIST-Test128" "C:/Users/MHK/Documents/Folder Izzat/rssi-generator/encryption/NIST-Test128.c"'
+# subprocess.run(command, shell=True)
 
-command = "NIST-Test128"
+command = "E:/My Code Projects/rssi_generator/encryption/Node/NIST-Test128.exe"
 subprocess.run(command, shell=True)
 
 indeks = []
@@ -119,7 +121,7 @@ indek = []
 
 time.sleep(1)
 
-with open(os.path.join(args.destination, "sudahujinist_Alice.csv"), newline="") as f:
+with open("NISTHash1.csv", newline="") as f:
     reader = csv.reader(f)
     for row in reader:
         indeks.append(row)
@@ -155,18 +157,21 @@ for i in range (1,len(hex1)+1):
 book.save('Hashnode.xls')
 book.save(TemporaryFile())
 
-workbook = xlrd.open_workbook('../Gateway/Hashgateway.xls', on_demand = True)
+workbook = xlrd.open_workbook('E:/My Code Projects/rssi_generator/encryption/Gateway/Hashgateway.xls', on_demand = True)
 worksheet = workbook.sheet_by_index(0)
 first_row = [] # Header
 for col in range(0,worksheet.ncols):
     first_row.append( worksheet.cell_value(0,col) )
     # tronsform the workbook to a list of dictionnaries
 hex2 = []
+
 for row in range(1, worksheet.nrows):
     elm = {}
     for col in range(1):
         elm=worksheet.cell_value(row,col)
     hex2.append(elm)
+print("Length Hex1 : ", hex1)
+print("Length hex2: ", hex2)
 #end_SHA=time.time()
 #time_sha=end_SHA-start_SHA
 for j in range(len(indek)):    
@@ -180,3 +185,45 @@ waktu_SHA = end6-start6
 print('-------------------')
 print('SHA Berhasil')
 print('-------------------')
+
+print('\n\n===========~~~~~~~~~~~== AES ~~~~~~~~~~~~~~==============')
+print('===========~~~~~~~~~~~=========~~~~~~~~~~~~~~==============\n')
+start_aes=time.time()
+for kuncinya in range(len(indek)):
+    if(hex1[kuncinya]==hex2[kuncinya]):
+        # =========================================================================
+        # ================================= AES-12 ===============================
+
+        keybit = ''.join(str(e) for e in key1[indek[kuncinya]])
+        keyint=int(keybit,2)
+        keybyte=binascii.unhexlify('%x' % keyint)
+        
+        #=======================================================CTR===
+        print ('\n=================CTR=============')
+        plaintext = "1.5,1110.5,5.4,4"
+        print ('Plaintext = ',plaintext)
+
+        # key must be bytes, so we convert it
+        print('Key Alice (bit)',keybit)
+        print('Key Alice (bytes) = ',keybyte)
+
+        with open("keyA.txt", "wb") as binary_file:
+            writen = binary_file.write(keybyte)
+
+        aesctr = pyaes.AESModeOfOperationCTR(keybyte)    
+        ciphertext = aesctr.encrypt(plaintext)
+
+        # show the encrypted data
+        print ('ciphertext = ',ciphertext)
+##        print('len cp',len(ciphertext))
+        #sendtext(ciphertext)
+        #time.sleep(4)
+        print('Proses selesai')
+        break
+    elif(hex1[kuncinya]!=hex2[kuncinya] and (kuncinya+1)<(len(indek)+1)):
+        print('Hash untuk kunci ke-%d tidak valid, maka pakai kunci selanjutnya (Kunci ke-%d)'%(indek[kuncinya]+1,indek[kuncinya+1]+1))
+    else:
+        print('Hash untuk kunci ke-%d tidak valid, ulangi proses dari awal (Pengukuran)'%(indek[kuncinya]+1))
+        break
+end_aes=time.time()
+waktu_aes=end_aes-start_aes

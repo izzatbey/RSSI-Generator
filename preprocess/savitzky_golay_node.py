@@ -40,3 +40,4 @@ waktu_golay = end1-start1
 print('------------------')
 print('Preproses Berhasil')
 print('------------------')
+print ("Lama Eksekusi :",waktu_golay,"detik")

@@ -3,17 +3,15 @@ import argparse
 import os
 import time
 import numpy as np
-from openpyxl import Workbook
-import xlrd
-from math import log
-from tempfile import TemporaryFile
+import csv
 
 from comm.socket_comm import socketrecv, socketsend, init_socket
 
-def load_data_from_excel(file_path):
-    workbook = xlrd.open_workbook(file_path, on_demand=True)
-    worksheet = workbook.sheet_by_index(0)
-    nilaiasli = [worksheet.cell_value(row, 0) for row in range(1, worksheet.nrows)]
+def load_data_from_csv(file_path):
+    with open(file_path, 'r') as csvfile:
+        csv_reader = csv.reader(csvfile)
+        next(csv_reader)  # Skip the header
+        nilaiasli = [float(row[0]) for row in csv_reader]
     return np.array(nilaiasli)
 
 def quantize_data(data, block_size=128):
@@ -36,7 +34,7 @@ def perform_quantization(quantized_data):
         L.sort()
         nilairss, addressing = zip(*L)
         p = len(nilairss)
-        N = log(p, 2)
+        N = math.log(p, 2)
         a = 2
         M = 2 ** a if a <= N else 2
         
@@ -79,15 +77,12 @@ def perform_quantization(quantized_data):
     
     return hasiljana
 
-def save_quantized_data(quantized_data, file_path):
-    book = Workbook()
-    sheet1 = book.create_sheet('kuantisasiALICE')
-    sheet1.cell(row=1, column=1, value='AliceKuan')
-    for i, data in enumerate(quantized_data):
-        for j in range(len(data)):
-            sheet1.cell(row=i * len(data) + j + 2, column=1, value=int(data[j]))
-    book.save(file_path)
-    book.save(TemporaryFile())
+def save_quantized_data_as_csv(quantized_data, file_path):
+    with open(file_path, 'w', newline='') as csvfile:
+        csv_writer = csv.writer(csvfile)  # Write the header
+        
+        for data in quantized_data:
+            csv_writer.writerow(data)
 
 mulai = time.time()
 start_jana = time.time()
@@ -101,15 +96,15 @@ args = parser.parse_args()
 
 data_file_path = os.path.join(args.datapath, args.filename)
 
-preprocess_data = load_data_from_excel(data_file_path)
+preprocess_data = load_data_from_csv(data_file_path)
 
 quantized_data = quantize_data(preprocess_data)
 hasiljana = perform_quantization(quantized_data)
 
 hasilakhir = [bit for data in hasiljana for bit in data]
 
-hasil_file_path = os.path.join(args.destination, 'hasilkuantisasiAlice.xls') 
-save_quantized_data(hasiljana, hasil_file_path)
+hasil_file_path = os.path.join(args.destination, 'Kuantifikasi_janamultibit_node.csv') 
+save_quantized_data_as_csv(hasiljana, hasil_file_path)
 
 end_jana = time.time()
 time_jana = end_jana - start_jana
@@ -118,6 +113,6 @@ kgrkuan = len(hasilakhir) * (end_jana - start_jana)
 print('KGR = %f' % kgrkuan)
 print('waktu komputasi kuantisasi = {} seconds'.format(end_jana - start_jana))
 
-socketsend(hasil_file_path, init_socket())
-socketrecv(init_socket())
-print("Kuantisasi ALICE Berhasil")
+# socketsend(hasil_file_path, init_socket())
+# socketrecv(init_socket())
+print("Kuantisasi Node Berhasil")

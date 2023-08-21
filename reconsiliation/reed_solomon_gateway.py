@@ -224,6 +224,7 @@ np.savetxt(os.path.join(args.destination,'Gateway/Decoding_Gateway_Tanpa_Parity.
 
 end3=time.time()
 waktu_RS = end3-start3
+print ("Lama Eksekusi :",waktu_RS,"detik")
 print('-------------------')
 print('Error Correction Berhasil')
 print('-------------------')

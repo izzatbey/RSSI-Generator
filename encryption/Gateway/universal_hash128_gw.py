@@ -44,10 +44,10 @@ sheet1.title = 'HasilBCH'
 sheet1.cell(row=1, column=1, value='Apgateway')
 for i in range(1, len(bitalice) + 1):
     sheet1.cell(row=i + 1, column=1, value=int(bitalice[i - 1]))
-book.save(os.path.join(args.destination,'decodinggateway_tanpaparity.xlsx'))
+book.save('decodinggateway_tanpaparity.xlsx')
 
 # Read Excel and extract bit values
-workbook = openpyxl.load_workbook(os.path.join(args.destination,'decodinggateway_tanpaparity.xlsx'), read_only=True)
+workbook = openpyxl.load_workbook('decodinggateway_tanpaparity.xlsx', read_only=True)
 worksheet = workbook.active
 bbob = [int(worksheet.cell(row=row, column=1).value) for row in range(2, worksheet.max_row + 1)]
 
@@ -62,7 +62,7 @@ for i in range(aaaa):
     del bbob[lenbob]
 
 Hashtab = []
-with open(os.path.join(args.destination,'Hashtable128.csv'), newline='') as f:
+with open('Hashtable128.csv', newline='') as f:
     reader = csv.reader(f)
     for row in reader:
         Hashtab.append(row)
@@ -95,11 +95,11 @@ sheet1.title = 'univhash'
 sheet1.cell(row=1, column=1, value='gateway')
 for i in range(1, len(bx) + 1):
     sheet1.cell(row=i + 1, column=1, value=int(bx[i - 1]))
-book.save(os.path.join(args.destination,'gatewayUnivHash128.xlsx'))
+book.save('gatewayUnivHash128.xlsx')
 
 # Convert the key to CSV format
 univ = [bx[i] for i in range(len(bx))]
-with open(os.path.join(args.destination,'hashok128.csv'), 'w', newline='') as fp:
+with open('hashok128.csv', 'w', newline='') as fp:
     a = csv.writer(fp, delimiter=',')
     a.writerows([[bit] for bit in univ])
 
@@ -113,15 +113,15 @@ startnist = time.time()
 # command = 'gcc -o "C:/Users/MHK/Documents/Folder Izzat/rssi-generator/encryption/NIST-Test128" "C:/Users/MHK/Documents/Folder Izzat/rssi-generator/encryption/NIST-Test128.c"'
 # subprocess.run(command, shell=True)
 
-command = "NIST-Test128"
-subprocess.Popen(command, shell=True)
+command = "E:/My Code Projects/rssi_generator/encryption/Node/NIST-Test128.exe"
+subprocess.run(command, shell=True)
 
 indeks = []
 indek = []
 
 time.sleep(1)
 
-with open("C:/Users/MHK/Documents/Folder Izzat/rssi-generator/encryption/sudahujinist_Alice.csv", newline="") as f:
+with open("NISTHash1.csv", newline="") as f:
     reader = csv.reader(f)
     for row in reader:
         indeks.append(row)
@@ -161,7 +161,7 @@ book.save('Hashgateway.xls')
 book.save(TemporaryFile())
 
 
-workbook = xlrd.open_workbook('../Node/Hashnode.xls', on_demand = True)
+workbook = xlrd.open_workbook('E:/My Code Projects/rssi_generator/encryption/Node/Hashnode.xls', on_demand = True)
 worksheet = workbook.sheet_by_index(0)
 first_row = [] # Header
 for col in range(0,worksheet.ncols):
@@ -217,7 +217,7 @@ for kuncinya in range(len(indek)):
         aesctr = pyaes.AESModeOfOperationCTR(keybyte)
 
         # decrypted data is always binary, need to decode to plaintext
-        decrypted = aesctr.decrypt(ciphertext).decode('utf-8')
+        decrypted = aesctr.decrypt(ciphertext)
         
         # True
         print ('Dekripsi BERHASIL\nDecrypted cipher = ',decrypted)

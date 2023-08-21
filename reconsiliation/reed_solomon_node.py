@@ -198,6 +198,7 @@ np.savetxt(os.path.join(args.destination, 'Node/Decoding_Node_Tanpa_Parity.csv')
 
 end3=time.time()
 waktu_RS = end3-start3
+print ("Lama Eksekusi :",waktu_RS,"detik")
 print('-------------------')
 print('Error Correction Berhasil')
 print('-------------------')

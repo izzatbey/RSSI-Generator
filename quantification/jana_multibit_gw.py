@@ -1,3 +1,4 @@
+import csv
 import math
 import argparse
 import os
@@ -10,105 +11,83 @@ from tempfile import TemporaryFile
 
 from comm.socket_comm import socketrecv, socketsend, init_socket
 
-def load_data(file_path):
-    workbook = xlrd.open_workbook(file_path, on_demand=True)
-    worksheet = workbook.sheet_by_index(0)
-    data = []
-    for row in range(1, worksheet.nrows):
-        value = worksheet.cell_value(row, 0)
-        data.append(str(value))
-    return np.array(data)
+def load_data_from_csv(file_path):
+    with open(file_path, 'r') as csvfile:
+        csv_reader = csv.reader(csvfile)
+        next(csv_reader)  # Skip the header
+        nilaiasli = [float(row[0]) for row in csv_reader]
+    return np.array(nilaiasli)
 
-def process_data(data):
-    jana_data = []
-    jana_data1 = []
+def quantize_data(data, block_size=128):
+    jana_alice = [str(value) for value in data]
+    nilailebih = len(jana_alice) % block_size
+    jmlblok = math.floor(len(jana_alice) / block_size)
+    jana_alice1 = [str(jana_alice[i]) for i in range(len(jana_alice) - nilailebih)]
     
-    for value in data:
-        jana_data.append(value)
+    quantized_data = []
+    for blok in range(0, jmlblok):
+        tmp = jana_alice1[128 * blok:128 * (blok + 1)] if blok != 0 else jana_alice1[0:128]
+        quantized_data.append(tmp)
     
-    block_length = 128
-    excess_length = len(jana_data) % block_length
-    num_blocks = math.floor(len(jana_data) / block_length)
-    
-    for i in range(0, len(jana_data) - excess_length):
-        jana_data1.append(jana_data[i])
-    
-    jana_data = []
-    
-    for block in range(0, num_blocks):
-        tmp = []
-        if block == 0:
-            tmp.extend(jana_data1[0:block_length])
-        else:
-            tmp.extend(jana_data1[block_length * block:block_length * (block + 1)])
-        jana_data.append(tmp)
-    
-    hasil_jana = []
-    for coba in range(0, len(jana_data)):
-        jana_data1 = []
-        jana_data1.extend(jana_data[coba])
-        L = [(jana_data1[i], i) for i in range(len(jana_data1))]
+    return quantized_data
+
+def perform_quantization(quantized_data):
+    hasiljana = []
+    for jana_alice1 in quantized_data:
+        L = [(jana_alice1[i], i) for i in range(len(jana_alice1))]
         L.sort()
         nilairss, addressing = zip(*L)
-        
         p = len(nilairss)
-        N = log(p, 2)
+        N = math.log(p, 2)
         a = 2
-        M = 2 ** a
-        if a <= N:
-            M = 2 ** a
+        M = 2 ** a if a <= N else 2
         
         bb = M
-        filter_len = len(nilairss) % bb
-        if filter_len != 0:
-            reduction = len(nilairss) - filter_len
-            nilairss1 = np.array(nilairss[:reduction])
+        filter = len(nilairss) % bb
+        if filter != 0:
+            pengurangan = len(nilairss) - filter
+            nilairss1 = np.array(nilairss[:pengurangan])
         else:
             nilairss1 = np.array(nilairss)
-        
+            
         aa = int(len(nilairss1) / bb)
         x = nilairss1.reshape(bb, aa).T
         
-        for i in range(0, bb):
-            for j in range(0, len(x)):
-                if i == 0:
-                    x[j][i] = 4
-                elif i == 1:
-                    x[j][i] = 3
-                elif i == 2:
-                    x[j][i] = 2
-                elif i == 3:
-                    x[j][i] = 1
+        for i in range(bb):
+            for j in range(len(x)):
+                x[j][i] = 4 - i
         
         x1 = x.T
         x2 = x1.reshape(aa * bb, 1)
-        bentukawal = [int(val) for val in x2]
-        unsorted = list(zip(addressing, bentukawal))
-        unsorted.sort()
-        addressing, bitbit = zip(*unsorted)
+        bentukawal = [int(x2[i]) for i in range(len(x2))]
+        
+        unsort = sorted(zip(addressing, bentukawal))
+        addressing, bitbit = zip(*unsort)
         
         hasil = []
-        for bit in bitbit:
-            if bit == 4:
+        for i in range(len(bitbit)):
+            if bitbit[i] == 4:
                 hasil.extend([1, 0])
-            elif bit == 3:
+            elif bitbit[i] == 3:
                 hasil.extend([1, 1])
-            elif bit == 2:
+            elif bitbit[i] == 2:
                 hasil.extend([0, 1])
-            elif bit == 1:
+            elif bitbit[i] == 1:
                 hasil.extend([0, 0])
-        hasil_jana.append(hasil)
+        
+        hasiljana.append(hasil)
+        print("hasil kuantisasi \n", hasil)
+        print("jumlah key sekarang ", len(hasil))
     
-    return hasil_jana
+    return hasiljana
 
-def save_results(results, file_path):
-    book = Workbook()
-    sheet1 = book.create_sheet('kuantisasiBOB')
-    sheet1.cell(row=1, column=1, value='BobKuan')
-    for i, result in enumerate(results):
-        sheet1.cell(row=i + 2, column=1, value=int(result))
-    book.save(file_path)
-    book.save(TemporaryFile())
+def save_quantized_data_as_csv(quantized_data, file_path):
+    with open(file_path, 'w', newline='') as csvfile:
+        csv_writer = csv.writer(csvfile)
+        
+        for data in quantized_data:
+            csv_writer.writerow([data])  # Wrap the integer in a list or tuple
+
 
 mulai = time.time()
 start_jana = time.time()
@@ -123,24 +102,26 @@ args = parser.parse_args()
 data_file_path = os.path.join(args.datapath, args.filename)
 
 
-data = load_data(data_file_path)
-hasil_jana = process_data(data)
+data_file_path = os.path.join(args.datapath, args.filename)
 
-hasil_akhir = []
-for hasil_jana_item in hasil_jana:
-    hasil_akhir.extend(hasil_jana_item)
+preprocess_data = load_data_from_csv(data_file_path)
 
-hasil_file_path = os.path.join(args.destination, 'hasilkuantisasiBob.xls') 
-save_results(hasil_akhir, hasil_file_path)
+quantized_data = quantize_data(preprocess_data)
+hasiljana = perform_quantization(quantized_data)
+
+hasilakhir = [bit for data in hasiljana for bit in data]
+
+hasil_file_path = os.path.join(args.destination, 'Kuantifikasi_janamultibit_gw.csv') 
+save_quantized_data_as_csv(hasilakhir, hasil_file_path)
 
 end_jana = time.time()
 time_jana = end_jana - start_jana
-kgr_kuan = len(hasil_akhir) * (end_jana - start_jana)
+kgr_kuan = len(hasilakhir) * (end_jana - start_jana)
 
 print('KGR = %f' % kgr_kuan)
 print('waktu komputasi kuantisasi = {} seconds'.format(end_jana - start_jana))
 
-socketrecv(init_socket())
-socketsend(hasil_file_path, init_socket())
+# socketrecv(init_socket())
+# socketsend(hasil_file_path, init_socket())
 
 print("Kuantisasi BOB Berhasil")
