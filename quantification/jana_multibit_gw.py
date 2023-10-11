@@ -3,11 +3,7 @@ import math
 import argparse
 import os
 import time
-from openpyxl import Workbook
-import xlrd
 import numpy as np
-from math import log
-from tempfile import TemporaryFile
 
 from comm.socket_comm import socketrecv, socketsend, init_socket
 
@@ -98,9 +94,6 @@ parser.add_argument('--datapath', required=True, help='Path to the preprocess di
 parser.add_argument('--filename', required=True, help='filename of the preprocess')
 parser.add_argument('--destination', required=True, help='Path for the result destination')
 args = parser.parse_args()
-
-data_file_path = os.path.join(args.datapath, args.filename)
-
 
 data_file_path = os.path.join(args.datapath, args.filename)
 
