@@ -1,14 +1,27 @@
-# rssi-generator
+# RSSI Generator
 
 ## Prerequierements
 - Python 3.10.x or above
+- Install setuptools in your machine
+  ```
+  pip install setuptools
+  ```
 - Install venv (Python Virtual Environment)
 
   Step to produce :
 
   ```
-  python -m venv venv
+  python3 -m venv venv
+  ```
+
+  For Windows:
+  ```
   .\venv\Scripts\Activate.ps1
+  ```
+
+  For Linux:
+  ```
+  source venv/bin/activate
   ```
   if the process worked, there would be a sign of "(venv)" in front of the terminal line.
   
@@ -20,7 +33,7 @@
   ```
   or
   ```
-  python -m pip install -r requirements.txt
+  python3 -m pip install -r requirements.txt
   ```
   wait and ensure all library installed.
 
