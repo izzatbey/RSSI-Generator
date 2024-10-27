@@ -72,8 +72,8 @@ def perform_quantization(quantized_data):
                 hasil.extend([0, 0])
         
         hasiljana.append(hasil)
-        print("hasil kuantisasi \n", hasil)
-        print("jumlah key sekarang ", len(hasil))
+        # print("hasil kuantisasi \n", hasil)
+        # print("jumlah key sekarang ", len(hasil))
     
     return hasiljana
 

@@ -9,10 +9,11 @@ import os
 # Parse command-line arguments
 parser = argparse.ArgumentParser(description='Preprocess data using curve fitting.')
 parser.add_argument('--datapath', required=True, help='Path to the datasets directory')
+parser.add_argument('--filename', required=True, help='Path for the filename .csv')
 parser.add_argument('--destination', required=True, help='Path for the result destination')
 args = parser.parse_args()
 
-data_file_path = os.path.join(args.datapath, "data_rss_gateway.csv")
+data_file_path = os.path.join(args.datapath, args.filename)
 
 start = time.time()
 

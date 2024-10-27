@@ -86,27 +86,30 @@ dataSetFull = [dataTmp['a'][i * maxSeq:(i + 1) * maxSeq] for i in range(25)]
 arrObj = np.zeros([len(dataTmp) * 2, 1])
 
 for seq in range(len(dataSetFull)):
-    # get count data
     countAllData = len(dataSetFull[seq])
-    # get unique data from list data
-    uniqueData = dataSetFull[seq].value_counts().index.tolist()
-    # get unique frequencyCount from list data
-    dataFreq = dataSetFull[seq].value_counts()
-    # ['uniquedata','frequency','probability','cumulative','arrange']
-    final = np.zeros([len(uniqueData), 5])
-    iterator = 0 + (seq * maxSeq)
-    for i in range(len(uniqueData)):
-        # assign unique data
-        final[i][0] = uniqueData[i]
-        # assign frequencyCount data
-        final[i][1] = dataFreq.values[i]
-        # assign probability each data
-        final[i][2] = float(dataFreq.values[i]) / float(countAllData)
+    if countAllData == 0:
+        continue  # Skip this sequence if it has no data
 
-    final[0][3] = final[0][2]
-    for i in range(len(uniqueData)):
+    uniqueData = dataSetFull[seq].value_counts().index.tolist()
+    if len(uniqueData) == 0:
+        continue  # Skip if there are no unique values
+
+    dataFreq = dataSetFull[seq].value_counts()
+    final = np.zeros([len(uniqueData), 5])
+
+    # Assign the first cumulative probability safely
+    if len(uniqueData) > 0:
+        final[0][3] = final[0][2]
+
+    # Continue with the cumulative probability calculation
+    for i in range(1, len(uniqueData)):
         final[i][3] = final[i - 1][3] + final[i][2]
 
+    # Process data normally
+    iterator = 0 + (seq * maxSeq)
+    if iterator >= len(arrObj):
+        print(f"Error: iterator {iterator} out of bounds for arrObj with size {len(arrObj)}")
+        break  # Stop to avoid further issues
     for i in range(countAllData):
         for j in range(len(uniqueData)):
             if dataTmp['a'][i + (maxSeq * seq)] == final[j][0]:
@@ -115,7 +118,7 @@ for seq in range(len(dataSetFull)):
                 objectInitial.setPointRange(final[j][4])
                 arrObj[iterator] = objectInitial.baseData()[0]
                 arrObj[iterator + 1] = objectInitial.baseData()[1]
-                iterator = iterator + 2
+                iterator += 2
 
 np.savetxt(os.path.join(args.destination, 'quan_alice1.csv'), arrObj, delimiter=';', fmt='%i')
 end = time.time()

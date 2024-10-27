@@ -125,6 +125,6 @@ time_kalman=end_kalman-start_kalman
 
 print('-------------------')
 print('Kuantisasi Berhasil')
-print("waktu komputasi kuantisasi = ", time_kalman)
+print("waktu komputasi kuantisasi = ", time_kalman, "detik")
 print('-------------------')
 # End Preprocess

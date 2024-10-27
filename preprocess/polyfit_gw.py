@@ -25,9 +25,9 @@ x=np.array(x)
 for i in range(len(x)):
     RSSI2.append(int(x[i][0]))
 RSSI2=np.array(RSSI2)
-x=RSSI2.reshape(1000)
+x=RSSI2.reshape(3000)
 
-y =  np.linspace(0, 1000, 1000)
+y =  np.linspace(0, 3000, 3000)
 
 for deg in degrees:
     destination_file_path = os.path.join(args.destination, f'Polyfit_GW_{deg}deg.csv')

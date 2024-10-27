@@ -11,12 +11,13 @@ from reconsiliation.reed_solomon import ReedSolomon
 # Parse command-line arguments
 parser = argparse.ArgumentParser(description='Data reconsiliation using Reed Solomon.')
 parser.add_argument('--datapath', required=True, help='Path to the quantification directory')
+parser.add_argument('--filename', required=True, help='Path for the filename .csv')
 parser.add_argument('--destination', required=True, help='Path for the result destination')
 args = parser.parse_args()
 
 start3 = time.time()
 fooRS = ReedSolomon()
-namafile1 = os.path.join(args.datapath,'Kuantifikasi_GW.csv') 
+namafile1 = os.path.join(args.datapath,args.filename) 
 # proses Encode RSSI Gateway
 RSSI3 = []
 with open(namafile1) as f:

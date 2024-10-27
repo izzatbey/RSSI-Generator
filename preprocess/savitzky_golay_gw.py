@@ -29,7 +29,7 @@ RSSI=np.array(RSSI)
 for i in range(len(RSSI)):
     RSSI2.append(int(RSSI[i][0]))
 RSSI2=np.array(RSSI2)
-RSSI=RSSI2.reshape(1000)
+RSSI=RSSI2.reshape(3000)
 
 destination_file_path = os.path.join(args.destination, 'Golay_GW.csv')
 X_smooth_1 = savgol_filter(RSSI, w, polyorder = p)
